@@ -1,0 +1,23 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: system-ui;
+  }
+  
+  input-chip {
+    width: 400px;
+    margin-left: 1rem;
+  }
+  .i-label {
+    margin-top: 1rem;
+    position: relative;
+    display: block;
+    margin-left: 1.25rem;
+  }
+  .i-helper {
+    position: relative;
+    display: block;
+    margin-left: 1.25rem;
+    font-size: 0.7em;
+  }
