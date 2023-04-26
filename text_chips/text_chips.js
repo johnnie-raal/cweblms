@@ -83,6 +83,7 @@ padding: 4px 4px;
 border-radius: 50%;
 height: 9px;
 margin-left: 4px;
+cursor:pointer;
   }
   
     
@@ -143,7 +144,6 @@ margin-left: 4px;
     this.keywords.push(text);
 
     const shadow = this.shadowRoot;
-    shadow.appendChild(chipstyle);
     const c_input = shadow.getElementById("c-input");
     const nd = document.createElement("div");
     nd.setAttribute("class", "chip");
