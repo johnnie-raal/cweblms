@@ -1,5 +1,5 @@
 class ChipsKeywords extends HTMLElement {
-    allchips = [];
+    keywords = [];
     constructor() {
       self = super();
       const shadow = this.attachShadow({ mode: "open" });
@@ -7,6 +7,7 @@ class ChipsKeywords extends HTMLElement {
   
       stylebase.textContent = `
       :host {
+        background-color:white;
       margin-left: 1rem;
     border: 1px solid gray;
     min-width: 200px;
@@ -17,9 +18,18 @@ class ChipsKeywords extends HTMLElement {
     align-items: center;
     flex-wrap: wrap;
       }
-    :host(:host:focus-within) {
-      border-radius: 1px solid #1754c2;
+         :host(:host[disabled]) {
+      border: 1px solid lightgray;
+      background-color:#dedede;
+      cursor: not-allowed;
+         }
+     
+    
+    
+    :host(:host:not([disabled]):focus-within) {
+      border: 1px solid #1754c2;
       outline: 1px solid #1754c2;
+      
     }
     :host .c-input{
     cursor:default;
@@ -36,33 +46,14 @@ class ChipsKeywords extends HTMLElement {
      border: none;
       outline: none;
     }
-      `;
-  
-      shadow.appendChild(stylebase);
-      const c_input = document.createElement("input");
-      c_input.setAttribute("class", "c-input");
-      c_input.setAttribute("id", "c-input");
-      shadow.appendChild(c_input);
-      self.addEventListener("click", (event) => {
-        event.stopPropagation();
-        event.preventDefault();
-        c_input.focus();
-      });
-      c_input.addEventListener("keydown", (event) => {
-        if (event.key == "Enter") {
-          event.preventDefault();
-          event.stopPropagation();
-          console.log(event.target.value);
-          this.generatechip(event.target.value);
-        }
-      });
-    }
-  
-    generatechip(text) {
-      const chipstyle = document.createElement("style");
-      chipstyle.textContent = `
-    
-  .chip {
+
+     :host(:host[disabled]) .c-input{
+        cursor: not-allowed;
+        pointer-events: none;
+        background-color:#dedede;
+      }
+
+       :host .chip {
     
     margin: 0.25rem 0.25rem;
     padding: 0.25rem 0.75rem;
@@ -75,22 +66,20 @@ class ChipsKeywords extends HTMLElement {
     align-items: center;
     max-width: 200px;
   }
-  .chip img {
-    filter: invert(0.8) sepia(1) saturate(5) hue-rotate(185deg);
-    
+  :host .chip img {
+    background-color: #12439b;
+padding: 4px 4px;
+border-radius: 50%;
+height: 9px;
+margin-left: 4px;
   }
-    .chip span:last-child {
-        font-size: 1em;
-        line-height: 12px;
-        margin-left: 0.5rem;
-        padding: 1px 4px 4px 4px;
-        border-radius: 8px 8px;
-        background-color: #12439b;
-        cursor: pointer;
-        margin-top: 2px;
-    }
   
-    .chip span:first-child {
+    
+    
+  
+    :host .chip span {
+      max-width: 200px;
+      padding-bottom:1px;
       font-size: 0.8em;
       user-select: none;
       pointer-events: none;
@@ -98,10 +87,48 @@ class ChipsKeywords extends HTMLElement {
       overflow: hidden;
       white-space: nowrap;
     }
+
+    :host (:host[disabled]) .chip{
+      background-color:gray;
+    }
+  :host (:host[disabled]) .chip .img{
+      background-color:darkgray;
+    }
+
+      `;
   
+      shadow.appendChild(stylebase);
+      const c_input = document.createElement("input");
+      c_input.setAttribute("class", "c-input");
+      c_input.setAttribute("id", "c-input");
+      shadow.appendChild(c_input);
+      
+      self.addEventListener("click", (event) => {
+        event.stopPropagation();
+        event.preventDefault();
+        if(this.disabled) return;
+        c_input.focus();
+      });
+      c_input.addEventListener("keydown", (event) => {
+        if (event.key == "Enter") {
+          event.preventDefault();
+          event.stopPropagation();
+          if(event.target.value == '') return;
+          this.generatechip(event.target.value);
+        }
+      });
+    }
+  
+    generatechip(text) {
+      const chipstyle = document.createElement("style");
+      chipstyle.textContent = `
+    
+ 
   `;
+
+ 
   
-  this.allchips.push(text);
+  this.keywords.push(text);
   
       const shadow = this.shadowRoot;
       shadow.appendChild(chipstyle);
@@ -111,14 +138,13 @@ class ChipsKeywords extends HTMLElement {
   
       const stext = document.createElement("span");
       stext.innerText = text;
-      const iremove = document.createElement("span");
-      iremove.innerHTML = "&times;";
+      const iremove = document.createElement("img");
+      iremove.src = './img/close.png';
       //iremove.classList += "fa-solid fa-xmark";
       iremove.addEventListener("click", (event) => {
         event.preventDefault();
         event.stopPropagation();
-        const nw = this.allchips.filter((x) => x != text);
-        this.allchips = nw.map((x) => x);
+       if(this.disabled) return;
         this.update(text);
       });
       nd.appendChild(stext);
@@ -126,12 +152,12 @@ class ChipsKeywords extends HTMLElement {
       shadow.insertBefore(nd, c_input);
       c_input.value = "";
     }
-    get chips() {
-      return this.allchips;
-    }
+   
     update(text) {
       const shadow = this.shadowRoot;
       const c_input = shadow.getElementById("c-input");
+       const nw = this.keywords.filter((x) => x != text);
+        this.keywords = nw.map((x) => x);
       for (let i = 0; i < shadow.children.length; i++) {
         if (shadow.children[i].innerHTML.includes(text)) {
           shadow.removeChild(shadow.children[i]);
@@ -140,6 +166,49 @@ class ChipsKeywords extends HTMLElement {
         }
       }
     }
+
+     static get keywords() {
+      return this.keywords;
+    }
+
+  
+
+    static get observedAttributes() {
+    return ['disabled', 'keywords'];
+  }
+
+  get disabled() {
+    return this.hasAttribute('disabled');
+  }
+
+  
+
+  set disabled(val) {
+    
+    if (val) {
+      this.setAttribute('disabled', '');
+    } else {
+      this.removeAttribute('disabled');
+    }
+    
+  }
+  // Only called for the disabled and open attributes due to observedAttributes
+  attributeChangedCallback(name, oldValue, newValue) {
+    // When the drawer is disabled, update keyboard/screen reader behavior.
+    if (this.disabled) {
+      const shadow = this.shadowRoot;
+      const c_input = shadow.getElementById("c-input");
+      c_input.blur();
+      this.setAttribute('tabindex', '-1');
+      this.setAttribute('aria-disabled', 'true');
+    } else {
+      this.setAttribute('tabindex', '0');
+      this.setAttribute('aria-disabled', 'false');
+    }
+   
+    // TODO: also react to the open attribute changing.
+  }
+
   }
   customElements.define("input-chip", ChipsKeywords);
   
