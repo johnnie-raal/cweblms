@@ -114,7 +114,7 @@ cursor:pointer;
     c_input.setAttribute("class", "c-input");
     c_input.setAttribute("id", "c-input");
     shadow.appendChild(c_input);
-
+    this.keywords.add
     self.addEventListener("click", (event) => {
       event.stopPropagation();
       event.preventDefault();
