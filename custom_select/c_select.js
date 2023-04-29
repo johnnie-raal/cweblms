@@ -67,3 +67,129 @@ class CustomSelect extends HTMLSelectElement {
 }
 
 customElements.define('custom-select', CustomSelect, {extends: 'select'})
+
+class NWSelect extends HTMLElement {
+    constructor(){
+        super();
+        const shadow = this.attachShadow({ mode: "open" });
+        const stylebase = document.createElement("style");
+
+        stylebase.textContent = 
+        `
+        :host {
+            
+            width: inherit;
+            min-width: 120px;
+            height:inherit;
+            min-height: 28px;
+            position:relative;
+            display:block;
+           
+        }
+        
+        :host .nw-select-base-input {
+            width: inherit;
+            display: block;
+            position: relative;
+            border: 1px solid gray;
+            border-radius: 4px;
+            height: inherit;
+            min-height: 28px;
+            background-color:white;
+        }
+        :host .nw-select-base-options {
+            position: absolute;
+            top: 30px;
+            height: fit-content;
+            border: 1px solid gray;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+            overflow-y: auto;
+            width: 100%;
+            border-radius: 4px;
+            background-color: white;
+            max-height: 220px;
+
+        }
+        :host .nw-select-base-options .nw-select-option {
+            display: flex;
+flex-direction: row;
+align-items: center;
+border-bottom: 1px solid lightgray;
+padding: 4px;
+margin: 2px 8px;
+        }
+        `;
+        shadow.appendChild(stylebase);
+        const base_input = document.createElement('div');
+        base_input.setAttribute('class', 'nw-select-base-input');
+        shadow.appendChild(base_input);
+
+        const base_options = document.createElement('div');
+        base_options.setAttribute('class', 'nw-select-base-options');
+        shadow.appendChild(base_options)
+
+        const opts = this.querySelectorAll('option');
+
+        opts.forEach(option => {
+            console.log(option);
+            const inner_label = option.label || option.text || option.textContent;
+            option.innerHTML = '';
+            option.setAttribute('class', 'nw-select-option');
+            if(this.multiple){
+                //crear nodo check
+                const node_check = document.createElement('div');
+                node_check.setAttribute('class', 'nw-option-check');
+                option.appendChild(node_check);
+            } 
+            //crear nodo label
+            const node_label = document.createElement('div');
+            node_label.label = inner_label;
+            node_label.textContent = inner_label;
+            node_label.text = inner_label;
+            node_label.setAttribute('class', 'nw-option-label')
+            option.appendChild(node_label);
+            base_options.appendChild(option);
+            
+        });
+       
+    }
+
+    static get observedAttributes() {
+        return ['disabled', 'multiple', 'nw-mode'];
+      }
+
+      get disabled() {
+        return this.hasAttribute('disabled');
+      }
+    
+      get multiple(){
+        return this.hasAttribute('multiple');
+      }
+    
+      set disabled(val) {
+    
+        if (val) {
+          this.setAttribute('disabled', '');
+        } else {
+          this.removeAttribute('disabled');
+        }
+    
+      }
+      // Only called for the disabled and open attributes due to observedAttributes
+      attributeChangedCallback(name, oldValue, newValue) {
+        // When the drawer is disabled, update keyboard/screen reader behavior.
+        if (this.disabled) {
+          this.setAttribute('tabindex', '-1');
+          this.setAttribute('aria-disabled', 'true');
+        } else {
+          this.setAttribute('tabindex', '0');
+          this.setAttribute('aria-disabled', 'false');
+        }
+    
+        // TODO: also react to the open attribute changing.
+      }
+}
+
+customElements.define('nw-select', NWSelect);
