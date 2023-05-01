@@ -69,6 +69,7 @@ class CustomSelect extends HTMLSelectElement {
 customElements.define('custom-select', CustomSelect, {extends: 'select'})
 
 class NWSelect extends HTMLElement {
+
     constructor(){
         super();
         const shadow = this.attachShadow({ mode: "open" });
@@ -88,14 +89,33 @@ class NWSelect extends HTMLElement {
         }
         
         :host .nw-select-base-input {
-            width: inherit;
-            display: block;
-            position: relative;
-            border: 1px solid gray;
-            border-radius: 4px;
-            height: inherit;
-            min-height: 28px;
-            background-color:white;
+          width: inherit;
+          display: flex;
+          position: relative;
+          border: 1px solid gray;
+          border-radius: 4px;
+          height: inherit;
+          min-height: 28px;
+          background-color: white;
+        }
+        :host .nw-select-base-input::after {
+          background-image: url('./img/chevron-down.png');
+          background-repeat: no-repeat;
+          width: 14px;
+          height: 12px;
+          background-size: contain;
+          clear: both;
+          display: table;
+          content: '';
+          margin-left: auto;
+          margin-top: 10px;
+          margin-right: 8px;
+      
+      }
+
+        :host .nw-select-base-input-text{
+          flex: 1;
+          margin: 2px 8px;
         }
         :host .nw-select-base-options {
             position: absolute;
@@ -120,10 +140,39 @@ border-bottom: 1px solid lightgray;
 padding: 4px;
 margin: 2px 8px;
         }
+
+        :host .nw-option-check {
+          width: 12px;
+          height: 12px;
+          position: relative;
+          margin-right: 4px;
+          
+          background-color: white;
+          border-radius: 3px;
+          border: 2px solid gray;
+        }
+        :host .nw-option-checked{
+          width: 16px;
+height: 16px;
+
+background-image: url('./img/check.png');
+background-size: 12px;
+background-repeat: no-repeat;
+background-position: center;
+background-color: darkblue;
+border:none;
+        }
         `;
         shadow.appendChild(stylebase);
         const base_input = document.createElement('div');
         base_input.setAttribute('class', 'nw-select-base-input');
+
+        
+
+        const text_input = document.createElement('div');
+        text_input.setAttribute('class', 'nw-select-base-input-text');
+        base_input.appendChild(text_input);
+        
         shadow.appendChild(base_input);
 
         const base_options = document.createElement('div');
@@ -134,14 +183,17 @@ margin: 2px 8px;
 
         opts.forEach(option => {
             console.log(option);
+            option.style.display = 'none';
             const inner_label = option.label || option.text || option.textContent;
             option.innerHTML = '';
             option.setAttribute('class', 'nw-select-option');
+             //crear nodo check
+             const node_check = document.createElement('div');
+             node_check.setAttribute('class', 'nw-option-check');
             if(this.multiple){
-                //crear nodo check
-                const node_check = document.createElement('div');
-                node_check.setAttribute('class', 'nw-option-check');
+        
                 option.appendChild(node_check);
+
             } 
             //crear nodo label
             const node_label = document.createElement('div');
@@ -151,7 +203,26 @@ margin: 2px 8px;
             node_label.setAttribute('class', 'nw-option-label')
             option.appendChild(node_label);
             base_options.appendChild(option);
-            
+            option.addEventListener('click', (event) => {
+              console.log(event.target.selected);
+              if(event.target.tagName == 'OPTION'){
+                if(this.multiple){
+
+                } else {
+
+                }
+                if(option.selected){
+                  if(this.multiple){
+                    node_check.removeAttribute('class', 'nw-option-checked');
+                  }
+                } else {
+                  if(this.multiple){
+                    node_check.setAttribute('class', 'nw-option-checked');
+                  }
+                }
+               
+              }
+            })
         });
        
     }
@@ -188,6 +259,11 @@ margin: 2px 8px;
           this.setAttribute('aria-disabled', 'false');
         }
     
+        if(this.multiple){
+
+        } else {
+
+        }
         // TODO: also react to the open attribute changing.
       }
 }

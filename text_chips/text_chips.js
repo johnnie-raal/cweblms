@@ -10,7 +10,7 @@ class ChipsKeywords extends HTMLElement {
     self = super();
     const shadow = this.attachShadow({ mode: "open" });
     const stylebase = document.createElement("style");
-
+ 
     stylebase.textContent = `
       :host {
         background-color:white;
@@ -136,7 +136,24 @@ cursor:pointer;
     c_input.addEventListener('blur', () => {
       c_input.style.display = 'none';
     });
+
+  
     
+  }
+
+  callback(mutationList) {
+    mutationList.forEach((mutation) => {
+      switch (mutation.type) {
+        case "attributes":
+          switch (mutation.attributeName) {
+            case "keywords":
+              console.log('keywords change');
+              break;
+            
+          }
+          break;
+      }
+    });
   }
 
   generatechip(text) {
@@ -184,6 +201,7 @@ cursor:pointer;
   }
 
 
+ 
 
   static get observedAttributes() {
     return ['disabled'];
