@@ -69,7 +69,7 @@ class CustomSelect extends HTMLSelectElement {
 customElements.define('custom-select', CustomSelect, {extends: 'select'})
 
 class NWSelect extends HTMLElement {
-
+    optionsCollection = [];
     constructor(){
         super();
         const shadow = this.attachShadow({ mode: "open" });
@@ -182,6 +182,7 @@ border:none;
         const opts = this.querySelectorAll('option');
 
         opts.forEach(option => {
+          this.optionsCollection.push(option);
             console.log(option);
             option.style.display = 'none';
             const inner_label = option.label || option.text || option.textContent;
@@ -225,6 +226,13 @@ border:none;
             })
         });
        
+    }
+
+    updateoptionsmultiple(){
+
+    }
+    updateoptionssingle(){
+
     }
 
     static get observedAttributes() {

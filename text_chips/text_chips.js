@@ -5,9 +5,10 @@ Busca un event listener que este checando los valores para que si se modifican o
 */
 
 class ChipsKeywords extends HTMLElement {
-  keywords = [];
+  
   constructor() {
     self = super();
+    this.keywords = [];
     const shadow = this.attachShadow({ mode: "open" });
     const stylebase = document.createElement("style");
  
@@ -137,24 +138,12 @@ cursor:pointer;
       c_input.style.display = 'none';
     });
 
-  
+    const observedObj = new Proxy(this.keywords, {});
+
     
   }
 
-  callback(mutationList) {
-    mutationList.forEach((mutation) => {
-      switch (mutation.type) {
-        case "attributes":
-          switch (mutation.attributeName) {
-            case "keywords":
-              console.log('keywords change');
-              break;
-            
-          }
-          break;
-      }
-    });
-  }
+ 
 
   generatechip(text) {
     
@@ -236,7 +225,14 @@ cursor:pointer;
       this.setAttribute('aria-disabled', 'false');
     }
 
+    
+
     // TODO: also react to the open attribute changing.
+  }
+
+  connectedCallback() {
+   
+    
   }
 
 }
