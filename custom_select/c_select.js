@@ -69,12 +69,12 @@ class CustomSelect extends HTMLSelectElement {
 customElements.define('custom-select', CustomSelect, {extends: 'select'})
 
 class NWSelect extends HTMLElement {
-    optionsCollection = [];
+    
     constructor(){
         super();
         const shadow = this.attachShadow({ mode: "open" });
         const stylebase = document.createElement("style");
-
+        shadow.optionsCollection = [];
         stylebase.textContent = 
         `
         :host {
@@ -182,7 +182,8 @@ border:none;
         const opts = this.querySelectorAll('option');
 
         opts.forEach(option => {
-          this.optionsCollection.push(option);
+          const optionsCollection = this.shadowRoot.optionsCollection;
+          optionsCollection.push(option);
             console.log(option);
             option.style.display = 'none';
             const inner_label = option.label || option.text || option.textContent;
@@ -248,7 +249,6 @@ border:none;
       }
     
       set disabled(val) {
-    
         if (val) {
           this.setAttribute('disabled', '');
         } else {

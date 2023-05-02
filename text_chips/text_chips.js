@@ -8,10 +8,10 @@ class ChipsKeywords extends HTMLElement {
   
   constructor() {
     self = super();
-    this.keywords = [];
+    
     const shadow = this.attachShadow({ mode: "open" });
     const stylebase = document.createElement("style");
- 
+    shadow.keywords = [];
     stylebase.textContent = `
       :host {
         background-color:white;
@@ -115,7 +115,6 @@ cursor:pointer;
     c_input.setAttribute("class", "c-input");
     c_input.setAttribute("id", "c-input");
     shadow.appendChild(c_input);
-    this.keywords.add
     self.addEventListener("click", (event) => {
       event.stopPropagation();
       event.preventDefault();
@@ -138,18 +137,21 @@ cursor:pointer;
       c_input.style.display = 'none';
     });
 
-    const observedObj = new Proxy(this.keywords, {});
 
     
   }
 
  
+  
+
 
   generatechip(text) {
     
-    this.keywords.push(text);
+    
+    
 
     const shadow = this.shadowRoot;
+    shadow.keywords.push(text);
     const c_input = shadow.getElementById("c-input");
     const nd = document.createElement("div");
     nd.setAttribute("class", "chip");
@@ -174,8 +176,8 @@ cursor:pointer;
   update(text) {
     const shadow = this.shadowRoot;
     const c_input = shadow.getElementById("c-input");
-    const nw = this.keywords.filter((x) => x != text);
-    this.keywords = nw.map((x) => x);
+    const nw = shadow.keywords.filter((x) => x != text);
+    shadow.keywords = nw.map((x) => x);
     for (let i = 0; i < shadow.children.length; i++) {
       if (shadow.children[i].innerHTML.includes(text)) {
         shadow.removeChild(shadow.children[i]);
@@ -225,9 +227,6 @@ cursor:pointer;
       this.setAttribute('aria-disabled', 'false');
     }
 
-    
-
-    // TODO: also react to the open attribute changing.
   }
 
   connectedCallback() {
