@@ -236,6 +236,10 @@ border:none;
 
     }
 
+    render(){
+
+    }
+
     static get observedAttributes() {
         return ['disabled', 'multiple', 'nw-mode'];
       }

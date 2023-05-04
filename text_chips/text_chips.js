@@ -129,7 +129,7 @@ cursor:pointer;
         event.preventDefault();
         event.stopPropagation();
         if (event.target.value == '') return;
-        this.generatechip(event.target.value);
+        this.addchip(event.target.value);
       }
     });
 
@@ -141,36 +141,68 @@ cursor:pointer;
     
   }
 
- 
   
+ 
+  addchip(value){
+    const shadow = this.shadowRoot;
+    
+    if(shadow.keywords.length == 0){
+      shadow.keywords.push(value);
+      this.render();
+      return;
+    } 
+    
+    if(shadow.keywords.includes(value)) return;
+    shadow.keywords.push(value);
+    this.render();
+  }
+  removechip(value){
+    const shadow = this.shadowRoot;
+    const nw = shadow.keywords.filter((x) => x != value);
+    shadow.keywords = nw.map((x) => x);
+    this.render();
+  }
 
+  render(){
+    const shadow = this.shadowRoot;
+    let chips = shadow.querySelectorAll('div.chip');
 
+    chips.forEach(chip => {
+      shadow.removeChild(chip);
+    })
+    const c_input = shadow.getElementById("c-input")
+    for(let item of shadow.keywords){
+       
+      const nd = document.createElement("div");
+      nd.setAttribute('value', item);
+      nd.setAttribute("class", "chip");
+  
+      const stext = document.createElement("span");
+      stext.innerText = item;
+      const iremove = document.createElement("img");
+      iremove.src = './img/close.png';
+      //iremove.classList += "fa-solid fa-xmark";
+      iremove.addEventListener("click", (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        if (this.disabled) return;
+        this.removechip(item);
+      });
+      nd.appendChild(stext);
+      nd.appendChild(iremove);
+      shadow.insertBefore(nd, c_input);
+      
+    }
+    c_input.focus();
+    c_input.value = "";
+  }
+  /*
   generatechip(text) {
-    
-    
     
 
     const shadow = this.shadowRoot;
     shadow.keywords.push(text);
-    const c_input = shadow.getElementById("c-input");
-    const nd = document.createElement("div");
-    nd.setAttribute("class", "chip");
-
-    const stext = document.createElement("span");
-    stext.innerText = text;
-    const iremove = document.createElement("img");
-    iremove.src = './img/close.png';
-    //iremove.classList += "fa-solid fa-xmark";
-    iremove.addEventListener("click", (event) => {
-      event.preventDefault();
-      event.stopPropagation();
-      if (this.disabled) return;
-      this.update(text);
-    });
-    nd.appendChild(stext);
-    nd.appendChild(iremove);
-    shadow.insertBefore(nd, c_input);
-    c_input.value = "";
+    
   }
 
   update(text) {
@@ -182,26 +214,25 @@ cursor:pointer;
       if (shadow.children[i].innerHTML.includes(text)) {
         shadow.removeChild(shadow.children[i]);
         c_input.focus();
-        return;
+        break;
       }
     }
+    console.log('exit of loop');
   }
+  */
 
-  static get keywords() {
-    return this.keywords;
+  getkeywords() {
+    const shadow = this.shadowRoot;
+    return shadow.keywords;
   }
-
-
- 
 
   static get observedAttributes() {
-    return ['disabled'];
+    return ['disabled', 'keywords'];
   }
 
   get disabled() {
     return this.hasAttribute('disabled');
   }
-
 
 
   set disabled(val) {
@@ -226,7 +257,7 @@ cursor:pointer;
       this.setAttribute('tabindex', '0');
       this.setAttribute('aria-disabled', 'false');
     }
-
+    
   }
 
   connectedCallback() {
