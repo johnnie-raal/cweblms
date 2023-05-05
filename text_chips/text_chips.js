@@ -221,13 +221,28 @@ cursor:pointer;
   }
   */
 
-  getkeywords() {
+  get getKeywords() {
     const shadow = this.shadowRoot;
     return shadow.keywords;
   }
 
+  setKeywords(value){
+    if(!Array.isArray(value)) {
+      console.error('Can not get a value, please be aware keywords must be an array');
+    }
+    for(let item of value){
+      //console.log(typeof item);
+      if(typeof item == 'string'){
+        //console.log(item + ' will be added');
+        this.addchip(item);
+        continue;
+      } 
+    }
+
+  }
+
   static get observedAttributes() {
-    return ['disabled', 'keywords'];
+    return ['disabled'];
   }
 
   get disabled() {
@@ -244,6 +259,10 @@ cursor:pointer;
     }
 
   }
+
+  get keywords() {
+    return this.hasAttribute('keywords');
+  }
   // Only called for the disabled and open attributes due to observedAttributes
   attributeChangedCallback(name, oldValue, newValue) {
     // When the drawer is disabled, update keyboard/screen reader behavior.
@@ -257,7 +276,7 @@ cursor:pointer;
       this.setAttribute('tabindex', '0');
       this.setAttribute('aria-disabled', 'false');
     }
-    
+   
   }
 
   connectedCallback() {

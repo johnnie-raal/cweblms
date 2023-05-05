@@ -19,7 +19,7 @@
 <!--Helper-->
 <div 
 style="
-font-size: 0.8em;
+font-size: 0.7em;
 position: fixed;
 bottom: 12px;
 padding: 12px 24px 12px 24px;
@@ -32,9 +32,11 @@ transform: translateX(-50%);
 border: 1px solid #003fb0;
 color: #003fb0;">
 Este ejemplo muestra un "custom web component" que simula el añadir "tags/keywords" cuando los insertas en un campo de texto 
-<br><strong>Error: </strong> cuando insertas valores usando JS estos no se actualizan en el input
+<br><strong>How to: </strong>
+<br> -Use getKeywords to get keywords user writes as string array
+<br> -Use setKeywords(value) to set keywords from your code where value must be an string array, each value from array who is not a string will not be added.
+<br> -Use attributte disabled to disable thw keyword input 
 </div>
-
 
 </body>
 </html>
