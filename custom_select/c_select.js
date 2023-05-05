@@ -57,12 +57,23 @@ class CustomSelect extends HTMLSelectElement {
        
     }
 
+    toggleoptions(state){
+      if(state){
+        this.render();
+      }
+    }
+
     updateoptions(){
         const opts = Array.from(this.querySelectorAll('option'));
         
         opts.forEach(option => {
             option.selected = this.options.includes(option.value) ?  true : false;
         })
+        this.render();
+    }
+
+    render(){
+      const opts = Array.from(this.querySelectorAll('option'));
     }
 }
 
